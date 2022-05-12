@@ -1,13 +1,16 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 import {
   badRequestHandler,
-  unauthorizedHandler,
   forbiddenHandler,
-  notFoundHandler,
   genericErrorHandler,
+  notFoundHandler,
+  unauthorizedHandler,
 } from "./errorHandlers.js";
+import basicReviewRouter from "./services/routers/basicReview-router.js";
+import clientCenterRouter from "./services/routers/clientCenter-router.js";
 import servicesRouter from "./services/routers/service-router.js";
+import usersRouter from "./services/routers/user-router.js";
 
 const app = express();
 const whitelist = [
@@ -39,7 +42,9 @@ app.use(express.json());
 // Routes
 
 app.use("/services", servicesRouter);
-// app.use("/chats", chatRouter);
+app.use("/users", usersRouter);
+app.use("/clientCenters", clientCenterRouter);
+app.use("/reviews", basicReviewRouter);
 
 // For test purposes
 
