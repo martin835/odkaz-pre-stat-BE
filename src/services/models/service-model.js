@@ -4,14 +4,14 @@ const { Schema, model } = mongoose;
 
 const ServiceSchema = new Schema(
   {
-    name: { type: String, required: true },
-    provider: { type: String, required: true },
+    type: { type: String, required: true },
+    name: { type: String },
+    provider: {
+      type: mongoose.Types.ObjectId,
+      ref: "ClientCenter",
+      required: true,
+    },
     description: { type: String },
-    clientCenters: [
-      {
-        clientCenterId: { type: mongoose.Types.ObjectId, ref: "ClientCenter" },
-      },
-    ],
   },
   { timestamps: true }
 );

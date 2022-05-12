@@ -7,7 +7,10 @@ const servicesRouter = express.Router();
 servicesRouter.get("/", async (req, res, next) => {
   console.log("📨 PING - GET REQUEST");
   try {
-    const services = await ServiceModel.find({});
+    const services = await ServiceModel.find({}).populate({
+      path: "provider",
+      select: "name district url",
+    });
 
     res.send(services);
   } catch (error) {
