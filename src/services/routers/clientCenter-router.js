@@ -1,7 +1,7 @@
 import express from "express";
 import createError from "http-errors";
 import ClientCenterModel from "../models/clientCenter-model.js";
-import ServiceModel from "../models/service-model.js";
+//import ServiceModel from "../models/service-model.js";
 
 const clientCenterRouter = express.Router();
 

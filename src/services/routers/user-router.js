@@ -7,7 +7,7 @@ const usersRouter = express.Router();
 usersRouter.get("/", async (req, res, next) => {
   console.log("📨 PING - GET REQUEST");
   try {
-    const users = await UserModel.find({});
+    const users = await UserModel.find({}).populate({ path: "reviews" });
 
     res.send(users);
   } catch (error) {

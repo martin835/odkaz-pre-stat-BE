@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import BasicReview from "./basicReview-model.js";
 
 const { Schema, model } = mongoose;
 
@@ -11,6 +12,7 @@ const ServiceSchema = new Schema(
       ref: "ClientCenter",
       required: true,
     },
+    reviews: [{ type: mongoose.Types.ObjectId, ref: "BasicReview" }],
     description: { type: String },
   },
   { timestamps: true }
