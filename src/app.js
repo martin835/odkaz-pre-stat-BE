@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import passport from "passport";
 import {
   badRequestHandler,
   forbiddenHandler,
@@ -11,8 +12,13 @@ import basicReviewRouter from "./services/routers/basicReview-router.js";
 import clientCenterRouter from "./services/routers/clientCenter-router.js";
 import servicesRouter from "./services/routers/service-router.js";
 import usersRouter from "./services/routers/user-router.js";
+import googleStrategy from "./auth/OAuth.js";
 
 const app = express();
+
+//***********************************Middlewares*******************************************************/
+passport.use("google", googleStrategy);
+
 const whitelist = [
   process.env.FE_DEV_URL,
   process.env.FE_PROD_URL,
@@ -38,8 +44,9 @@ app.use(
 );
 
 app.use(express.json());
+app.use(passport.initialize());
 
-// Routes
+//***********************************Endpoints*********************************************************/
 
 app.use("/services", servicesRouter);
 app.use("/users", usersRouter);
@@ -52,7 +59,7 @@ app.get("/test", (req, res) => {
   res.send({ message: "Hello, World!" });
 });
 
-// Error handlers
+//***********************************Error handlers****************************************************/
 
 app.use(badRequestHandler);
 app.use(unauthorizedHandler);

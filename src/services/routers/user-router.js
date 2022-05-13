@@ -1,5 +1,7 @@
 import express from "express";
 import createError from "http-errors";
+import passport from "passport";
+import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
 import UserModel from "../models/user-model.js";
 
 const usersRouter = express.Router();
@@ -25,5 +27,40 @@ usersRouter.post("/", async (req, res, next) => {
     next(error);
   }
 });
+
+usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const user = await UsersModel.findById(req.user._id);
+    if (user) {
+      res.send(user);
+    } else {
+      next(createError(401, `User with id ${req.user._id} not found!`));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.get(
+  "/googleLogin",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+  })
+);
+
+usersRouter.get(
+  "/googleRedirect",
+  passport.authenticate("google"),
+  async (req, res, next) => {
+    try {
+      console.log("Token: ", req.user.token);
+      //res.send({ accessToken: req.user.token });
+      res.redirect(`${process.env.FE_DEV_URL}?accessToken=${req.user.token}`);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default usersRouter;
