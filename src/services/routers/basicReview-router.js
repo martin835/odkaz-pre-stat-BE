@@ -1,6 +1,7 @@
 import express from "express";
 import createError from "http-errors";
 import BasicReviewModel from "../models/basicReview-model.js";
+import serviceModel from "../models/service-model.js";
 
 const basicReviewRouter = express.Router();
 
@@ -20,6 +21,14 @@ basicReviewRouter.post("/", async (req, res, next) => {
   try {
     const newReview = new BasicReviewModel(req.body);
     const { _id } = await newReview.save();
+
+    const serviceToReview = await serviceModel.findByIdAndUpdate(
+      { _id: req.body.service },
+      { $push: { reviews: _id } },
+      { new: true }
+    );
+    console.log(serviceToReview);
+
     res.status(201).send({ _id });
   } catch (error) {
     next(error);
