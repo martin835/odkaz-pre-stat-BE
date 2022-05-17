@@ -1,5 +1,6 @@
 import express from "express";
 import createError from "http-errors";
+import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
 import BasicReviewModel from "../models/basicReview-model.js";
 import serviceModel from "../models/service-model.js";
 
@@ -16,7 +17,7 @@ basicReviewRouter.get("/", async (req, res, next) => {
   }
 });
 
-basicReviewRouter.post("/", async (req, res, next) => {
+basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
   console.log("📨 PING - POST REQUEST");
   try {
     const newReview = new BasicReviewModel(req.body);

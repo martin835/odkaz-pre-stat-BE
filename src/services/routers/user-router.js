@@ -3,6 +3,7 @@ import createError from "http-errors";
 import passport from "passport";
 import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
 import UserModel from "../models/user-model.js";
+import googleStrategy from "../../auth/OAuth.js";
 
 const usersRouter = express.Router();
 
@@ -30,7 +31,7 @@ usersRouter.post("/", async (req, res, next) => {
 
 usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    const user = await UsersModel.findById(req.user._id);
+    const user = await UserModel.findById(req.user._id);
     if (user) {
       res.send(user);
     } else {

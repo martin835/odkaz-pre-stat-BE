@@ -33,8 +33,8 @@ const googleStrategy = new GoogleStrategy(
       } else {
         // 4. Else if user is not in db --> add user to db and then create token for him/her.
         const newUser = new UsersModel({
-          firstName: profile.name.givenName,
-          lastName: profile.name.familyName,
+          name: profile.name.givenName,
+          surname: profile.name.familyName,
           email: profile.emails[0].value,
           googleId: profile.id,
         });
