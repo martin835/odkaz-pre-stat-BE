@@ -20,7 +20,7 @@ basicReviewRouter.get("/", async (req, res, next) => {
 basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
   console.log("📨 PING - POST REQUEST");
   try {
-    const newReview = new BasicReviewModel(req.body);
+    const newReview = new BasicReviewModel({ ...req.body, user: req.user._id });
     const { _id } = await newReview.save();
 
     const serviceToReview = await serviceModel.findByIdAndUpdate(
