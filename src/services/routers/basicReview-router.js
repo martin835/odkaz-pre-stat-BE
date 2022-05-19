@@ -1,5 +1,5 @@
 import express from "express";
-import createError from "http-errors";
+import q2m from "query-to-mongo";
 import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
 import BasicReviewModel from "../models/basicReview-model.js";
 import serviceModel from "../models/service-model.js";
@@ -8,8 +8,15 @@ const basicReviewRouter = express.Router();
 
 basicReviewRouter.get("/", async (req, res, next) => {
   console.log("📨 PING - GET REQUEST");
+  console.log("REQ QUERY: ", req.query);
+  console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
-    const reviews = await BasicReviewModel.find({});
+    const mongoQuery = q2m(req.query);
+    const reviews = await BasicReviewModel.find(mongoQuery.criteria)
+      .limit(mongoQuery.options.limit || 6)
+      .skip(mongoQuery.options.skip || 0)
+      .sort({ createdAt: -1 })
+      .populate({ path: "user" });
 
     res.send(reviews);
   } catch (error) {
