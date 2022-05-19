@@ -16,12 +16,12 @@ const UserSchema = new Schema(
       enum: ["admin", "serviceProvider", "basicUser"],
       default: "basicUser",
     },
-    reviews: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "BasicReview",
-      },
-    ],
+    // reviews: [
+    //   {
+    //     type: mongoose.Types.ObjectId,
+    //     ref: "BasicReview",
+    //   },
+    // ],
   },
   { timestamps: true }
 );

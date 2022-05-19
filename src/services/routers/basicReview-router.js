@@ -16,7 +16,8 @@ basicReviewRouter.get("/", async (req, res, next) => {
       .limit(mongoQuery.options.limit || 6)
       .skip(mongoQuery.options.skip || 0)
       .sort({ createdAt: -1 })
-      .populate({ path: "user" });
+      .populate({ path: "user" })
+      .populate({ path: "service" });
 
     res.send(reviews);
   } catch (error) {

@@ -46,9 +46,14 @@ servicesRouter.post("/", async (req, res, next) => {
 servicesRouter.get("/:id", async (req, res, next) => {
   console.log("📨 PING - POST REQUEST");
   try {
-    const service = await ServiceModel.findById(req.params.id).populate({
-      path: "reviews",
-    });
+    const service = await ServiceModel.findById(req.params.id)
+      .populate({
+        path: "reviews",
+      })
+      .populate({
+        path: "provider",
+        select: "name district url",
+      });
 
     if (service) {
       res.send(service);
