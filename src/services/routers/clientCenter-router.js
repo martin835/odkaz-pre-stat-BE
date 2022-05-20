@@ -30,7 +30,7 @@ clientCenterRouter.post("/", async (req, res, next) => {
 });
 
 clientCenterRouter.get("/:id", async (req, res, next) => {
-  console.log("📨 PING - POST REQUEST");
+  console.log("📨 PING - GET CLIENTCENTER/ID REQUEST");
   try {
     const clientCenter = await ClientCenterModel.findById(
       req.params.id

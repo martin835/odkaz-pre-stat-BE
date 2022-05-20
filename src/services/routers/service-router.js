@@ -1,5 +1,6 @@
 import express from "express";
 import createError from "http-errors";
+import q2m from "query-to-mongo";
 import ServiceModel from "../models/service-model.js";
 import BasicReviewModel from "../models/basicReview-model.js";
 import ClientCenterModel from "../models/clientCenter-model.js";
@@ -7,9 +8,15 @@ import ClientCenterModel from "../models/clientCenter-model.js";
 const servicesRouter = express.Router();
 
 servicesRouter.get("/", async (req, res, next) => {
-  console.log("📨 PING - GET REQUEST");
+  console.log("📨 PING - GET ALL SERVICES REQUEST");
+
+  console.log("REQ QUERY: ", req.query);
+  console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
-    const services = await ServiceModel.find({})
+    const mongoQuery = q2m(req.query);
+    const services = await ServiceModel.find({
+      provider: mongoQuery.criteria.clientCenterId,
+    })
       .populate({
         path: "reviews",
       })
@@ -44,7 +51,7 @@ servicesRouter.post("/", async (req, res, next) => {
 });
 
 servicesRouter.get("/:id", async (req, res, next) => {
-  console.log("📨 PING - POST REQUEST");
+  console.log("📨 PING - GET SERVICE/ID REQUEST");
   try {
     const service = await ServiceModel.findById(req.params.id)
       .populate({
