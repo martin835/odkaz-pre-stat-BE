@@ -14,9 +14,7 @@ servicesRouter.get("/", async (req, res, next) => {
   console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
     const mongoQuery = q2m(req.query);
-    const services = await ServiceModel.find({
-      provider: mongoQuery.criteria.clientCenterId,
-    })
+    const services = await ServiceModel.find({})
       .populate({
         path: "reviews",
       })

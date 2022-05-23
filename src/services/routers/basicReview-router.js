@@ -12,7 +12,13 @@ basicReviewRouter.get("/", async (req, res, next) => {
   console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
     const mongoQuery = q2m(req.query);
-    const reviews = await BasicReviewModel.find(mongoQuery.criteria)
+    const reviews = await BasicReviewModel.find(
+      mongoQuery.criteria.clientCenterId
+        ? {
+            provider: mongoQuery.criteria.clientCenterId,
+          }
+        : {}
+    )
       .limit(mongoQuery.options.limit || 6)
       .skip(mongoQuery.options.skip || 0)
       .sort({ createdAt: -1 })
