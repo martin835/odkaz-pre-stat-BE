@@ -22,6 +22,7 @@ servicesRouter.get("/", async (req, res, next) => {
         path: "provider",
         select: "name district url",
       });
+
     res.send(services);
   } catch (error) {
     next(error);
