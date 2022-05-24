@@ -58,13 +58,6 @@ basicReviewRouter.get("/", async (req, res, next) => {
           reviewsToCalcStats.length) *
         100;
 
-      console.log("weights: ", {
-        weight5: weight5,
-        weight4: weight4,
-        weight3: weight3,
-        weight2: weight2,
-        weight1: weight1,
-      });
       let avgRating =
         Math.round((sumOfAllReviews / reviewsToCalcStats.length) * 10) / 10;
       console.log(
@@ -106,6 +99,35 @@ basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
     console.log(serviceToReview);
 
     res.status(201).send({ _id });
+  } catch (error) {
+    next(error);
+  }
+});
+
+basicReviewRouter.get("/stats", async (req, res, next) => {
+  console.log("📨 PING - GET STATS REQUEST");
+  try {
+    //get  all reviews
+    const mongoQuery = q2m(req.query);
+    const averageRatingPerClientCenter = await BasicReviewModel.aggregate([
+      {
+        $group: {
+          _id: "$provider",
+          avgRating: { $avg: "$rating" },
+          noReviews: { $count: {} },
+        },
+      },
+    ])
+      .lookup({
+        from: "clientcenters",
+        localField: "_id",
+        foreignField: "_id",
+        as: "Provider",
+      })
+      .limit(mongoQuery.options.limit || 10);
+
+    console.log(averageRatingPerClientCenter);
+    res.send(averageRatingPerClientCenter);
   } catch (error) {
     next(error);
   }

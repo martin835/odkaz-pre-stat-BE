@@ -50,7 +50,7 @@ servicesRouter.post("/", async (req, res, next) => {
 });
 
 servicesRouter.get("/:id", async (req, res, next) => {
-  console.log("📨 PING - GET SERVICE/ID REQUEST");
+  //console.log("📨 PING - GET SERVICE/ID REQUEST");
   try {
     const service = await ServiceModel.findById(req.params.id)
       .populate({
