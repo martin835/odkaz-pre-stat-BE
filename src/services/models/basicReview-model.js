@@ -14,6 +14,19 @@ const BasicReviewSchema = new Schema(
       ref: "ClientCenter",
     },
     user: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
+    comments: [
+      {
+        comment: { type: String, required: true },
+        rate: { type: Number, min: 1, max: 5, required: true },
+        commentDate: { type: Date, required: true },
+      },
+    ],
+    likes: [
+      {
+        userId: { type: mongoose.Types.ObjectId, ref: "User" },
+        _id: false,
+      },
+    ],
   },
   { timestamps: true }
 );
