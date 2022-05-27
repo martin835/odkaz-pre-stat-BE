@@ -63,10 +63,10 @@ basicReviewRouter.get("/", async (req, res, next) => {
 
       let avgRating =
         Math.round((sumOfAllReviews / reviewsToCalcStats.length) * 10) / 10;
-      console.log(
-        "AVERAGE RATING: ",
-        sumOfAllReviews / reviewsToCalcStats.length
-      );
+      // console.log(
+      //   "AVERAGE RATING: ",
+      //   sumOfAllReviews / reviewsToCalcStats.length
+      // );
 
       res.send({
         avgRating: avgRating,
@@ -90,7 +90,7 @@ basicReviewRouter.get("/", async (req, res, next) => {
 
 //2. Posts new review into the DB
 basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
-  console.log("📨 PING - POST REQUEST");
+  //console.log("📨 PING - POST REQUEST");
   try {
     const newReview = new BasicReviewModel({ ...req.body, user: req.user._id });
     const { _id } = await newReview.save();
@@ -110,7 +110,7 @@ basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
 
 //3. Get stats about reviews
 basicReviewRouter.get("/stats", async (req, res, next) => {
-  console.log("📨 PING - GET STATS REQUEST");
+  //console.log("📨 PING - GET STATS REQUEST");
   try {
     //get  all reviews
     const mongoQuery = q2m(req.query);
@@ -131,7 +131,7 @@ basicReviewRouter.get("/stats", async (req, res, next) => {
       })
       .limit(mongoQuery.options.limit || 10);
 
-    console.log(averageRatingPerClientCenter);
+    //console.log(averageRatingPerClientCenter);
     res.send(averageRatingPerClientCenter);
   } catch (error) {
     next(error);
@@ -142,7 +142,7 @@ basicReviewRouter.get("/stats", async (req, res, next) => {
 
 basicReviewRouter.get("/:reviewId", async (req, res, next) => {
   try {
-    console.log(`➡️ PING - GET Review with ${req.params.reviewId}  REQUEST`);
+    //console.log(`➡️ PING - GET Review with ${req.params.reviewId}  REQUEST`);
 
     const review = await BasicReviewModel.findById(req.params.reviewId);
     if (review) {
@@ -159,61 +159,65 @@ basicReviewRouter.get("/:reviewId", async (req, res, next) => {
 });
 
 //5. Post a like to a specific review
-basicReviewRouter.post("/:reviewId/likes", async (req, res, next) => {
-  console.log(`👍 PING - LIKE REQUEST for review ${req.params.reviewId}`);
-  try {
-    const { userId } = req.body;
+basicReviewRouter.post(
+  "/:reviewId/likes",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    //console.log(`👍 PING - LIKE REQUEST for review ${req.params.reviewId}`);
+    try {
+      const { userId } = req.body;
 
-    // 0. Does review post exist?
+      // 0. Does review post exist?
 
-    const review = await BasicReviewModel.findById(req.params.reviewId);
-    if (!review)
-      return next(
-        createError(404, `Review with id ${req.params.reviewId} not found`)
-      );
+      const review = await BasicReviewModel.findById(req.params.reviewId);
+      if (!review)
+        return next(
+          createError(404, `Review with id ${req.params.reviewId} not found`)
+        );
 
-    // 1. Does user exist?
+      // 1. Does user exist?
 
-    const user = await UsersModel.findById(userId);
-    if (!user)
-      return next(createError(404, `User with id ${userId} not found`));
+      const user = await UsersModel.findById(userId);
+      if (!user)
+        return next(createError(404, `User with id ${userId} not found`));
 
-    // 2. Is the blog post already liked by specified userId?
-    const isReviewLiked = await BasicReviewModel.findOne({
-      _id: req.params.reviewId,
-      "likes.userId": user._id,
-    });
+      // 2. Is the blog post already liked by specified userId?
+      const isReviewLiked = await BasicReviewModel.findOne({
+        _id: req.params.reviewId,
+        "likes.userId": user._id,
+      });
 
-    if (isReviewLiked) {
-      // 3.1 If it is there --> remove like
+      if (isReviewLiked) {
+        // 3.1 If it is there --> remove like
 
-      const modifiedLikes = await BasicReviewModel.findOneAndUpdate(
-        {
-          _id: req.params.reviewId,
-        },
-        {
-          $pull: { likes: { userId: userId } }, // in JS --> find index of the element --> products[index].quantity += quantity
-        },
-        {
-          new: true,
-        }
-      );
-      res.send(modifiedLikes);
-    } else {
-      // 3.2 If it is not --> add like
-      const modifiedLikes = await BasicReviewModel.findOneAndUpdate(
-        { _id: req.params.reviewId }, // WHAT we want to modify
-        { $push: { likes: { userId: user._id } } }, // HOW we want to modify the record
-        {
-          new: true, // OPTIONS
-          upsert: true, // if the like of that blog post is not found --> just create it automagically please
-        }
-      );
-      res.send(modifiedLikes);
+        const modifiedLikes = await BasicReviewModel.findOneAndUpdate(
+          {
+            _id: req.params.reviewId,
+          },
+          {
+            $pull: { likes: { userId: userId } }, // in JS --> find index of the element --> products[index].quantity += quantity
+          },
+          {
+            new: true,
+          }
+        );
+        res.send(modifiedLikes);
+      } else {
+        // 3.2 If it is not --> add like
+        const modifiedLikes = await BasicReviewModel.findOneAndUpdate(
+          { _id: req.params.reviewId }, // WHAT we want to modify
+          { $push: { likes: { userId: user._id } } }, // HOW we want to modify the record
+          {
+            new: true, // OPTIONS
+            upsert: true, // if the like of that blog post is not found --> just create it automagically please
+          }
+        );
+        res.send(modifiedLikes);
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 export default basicReviewRouter;

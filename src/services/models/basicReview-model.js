@@ -16,9 +16,15 @@ const BasicReviewSchema = new Schema(
     user: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
     comments: [
       {
-        comment: { type: String, required: true },
-        rate: { type: Number, min: 1, max: 5, required: true },
+        comment: { type: String, required: true, maxLength: 200 },
+        userId: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
         commentDate: { type: Date, required: true },
+        commentLikes: [
+          {
+            userId: { type: mongoose.Types.ObjectId, ref: "User" },
+            _id: false,
+          },
+        ],
       },
     ],
     likes: [

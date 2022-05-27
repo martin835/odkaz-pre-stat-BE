@@ -64,4 +64,15 @@ usersRouter.get(
   }
 );
 
+usersRouter.get("/:id", async (req, res, next) => {
+  console.log("📨 PING - GET REQUEST");
+  try {
+    const user = await UserModel.findById({ _id: req.params.id });
+
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default usersRouter;
