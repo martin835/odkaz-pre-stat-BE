@@ -65,6 +65,7 @@ basicReviewCommentsRouter.get("/:reviewId/comments", async (req, res, next) => {
 //8 GET ONE COMMENT from a Review
 basicReviewCommentsRouter.get(
   "/:reviewId/comments/:commentId",
+  JWTAuthMiddleware,
   async (req, res, next) => {
     try {
       console.log("➡️ PING - GET a COMMENT REQUEST");
@@ -102,6 +103,7 @@ basicReviewCommentsRouter.get(
 //9 EDIT a COMMENT in a Review
 basicReviewCommentsRouter.put(
   "/:reviewId/comments/:commentId",
+  JWTAuthMiddleware,
   async (req, res, next) => {
     try {
       console.log("➡️ PING - EDIT a COMMENT REQUEST");
@@ -145,6 +147,7 @@ basicReviewCommentsRouter.put(
 //10 DELETE A COMMENT in a Review
 basicReviewCommentsRouter.delete(
   "/:reviewId/comments/:commentId",
+  JWTAuthMiddleware,
   async (req, res, next) => {
     try {
       console.log("➡️ PING - DELETE a COMMENT REQUEST");
