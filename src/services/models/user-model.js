@@ -17,6 +17,7 @@ const UserSchema = new Schema(
       enum: ["admin", "serviceProvider", "basicUser"],
       default: "basicUser",
     },
+    confirmed: { type: Boolean, default: false },
     // reviews: [
     //   {
     //     type: mongoose.Types.ObjectId,
