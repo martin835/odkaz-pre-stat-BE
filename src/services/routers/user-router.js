@@ -4,6 +4,7 @@ import passport from "passport";
 import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
 import UserModel from "../models/user-model.js";
 import googleStrategy from "../../auth/OAuth.js";
+import { generateAccessToken } from "../../auth/tools.js";
 
 const usersRouter = express.Router();
 
@@ -36,6 +37,29 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
       res.send(user);
     } else {
       next(createError(401, `User with id ${req.user._id} not found!`));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.post("/login", async (req, res, next) => {
+  console.log(req.body);
+  try {
+    //1. Obtain credentials from req.body
+    const { email, password } = req.body;
+
+    //2. Verify credentials
+    const user = await UserModel.checkCredentials(email, password);
+    console.log(user);
+    if (user) {
+      const accessToken = await generateAccessToken({
+        _id: user._id,
+        role: user.role,
+      });
+      res.send({ accessToken });
+    } else {
+      next(createError(401, `Wrong login / registration credentials!`));
     }
   } catch (error) {
     next(error);
