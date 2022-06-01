@@ -100,7 +100,7 @@ usersRouter.post("/register", async (req, res, next) => {
 
     await sendRegistrationEmail(body);
 
-    res.send();
+    res.send({ message: "Verification e-mail should be sent!" });
   } catch (error) {
     next(error);
   }
