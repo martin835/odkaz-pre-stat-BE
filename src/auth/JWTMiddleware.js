@@ -29,6 +29,7 @@ export const JWTAuthMiddleware = async (req, res, next) => {
 };
 
 export const checkEmailMiddleware = async (req, res, next) => {
+  //console.log(" 👽 2 ?");
   // 1. Check if Authorization header is in the request, if it is not --> 401
   if (!req.headers.authorization) {
     next(
@@ -45,7 +46,6 @@ export const checkEmailMiddleware = async (req, res, next) => {
       // 4. If token is valid --> next()
       req.user = {
         _id: payload._id,
-        role: payload.role,
       };
       next();
     } catch (error) {

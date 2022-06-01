@@ -77,7 +77,11 @@ usersRouter.post("/register", async (req, res, next) => {
   console.log(req.body);
   try {
     //1 - create a new user in DB, verification status =  verified:false (default)
-    const newUser = new UserModel(req.body);
+    const newUser = new UserModel({
+      ...req.body,
+      avatar: "https://freesvg.org/img/Yoda.png",
+    });
+
     const { _id, email, name } = await newUser.save();
     //res.status(201).send({ _id });
     //2 - generate JWT token and insert it into URL
@@ -124,13 +128,23 @@ usersRouter.get(
   }
 );
 
-usersRouter.get(
-  "/verify-email/:token",
+usersRouter.post(
+  "/verify-email",
   checkEmailMiddleware,
   async (req, res, next) => {
-    console.log("did I get here 1 ?");
+    // console.log(" 👽 1 ?");
     try {
-      res.redirect(`${process.env.FE_DEV_URL}`);
+      const verifiedUser = await UserModel.findByIdAndUpdate(
+        { _id: req.user._id },
+        { verified: true },
+        { new: true }
+      );
+      console.log("User should be veriefied here: ", verifiedUser);
+      if (verifiedUser) {
+        res.send(verifiedUser);
+      } else {
+        next(createError(401, `Something went wrong with user verification!`));
+      }
     } catch (error) {
       next(error);
     }
