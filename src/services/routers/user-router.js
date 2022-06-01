@@ -5,6 +5,7 @@ import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
 import UserModel from "../models/user-model.js";
 import googleStrategy from "../../auth/OAuth.js";
 import { generateAccessToken } from "../../auth/tools.js";
+import { sendRegistrationEmail } from "../../tools/email-tools.js";
 
 const usersRouter = express.Router();
 
@@ -61,6 +62,25 @@ usersRouter.post("/login", async (req, res, next) => {
     } else {
       next(createError(401, `Wrong login / registration credentials!`));
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.post("/register", async (req, res, next) => {
+  console.log(req.body);
+  try {
+    const { email, name } = req.body;
+
+    const body = {
+      email: email,
+      name: name,
+      link: `http://potvrdzovacilink`,
+    };
+
+    await sendRegistrationEmail(body);
+
+    res.send();
   } catch (error) {
     next(error);
   }
