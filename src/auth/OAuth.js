@@ -10,7 +10,7 @@ const googleStrategy = new GoogleStrategy(
     callbackURL: `${process.env.API_URL}/users/googleRedirect`,
   },
   async (accessToken, refreshToken, profile, passportNext) => {
-    console.log("PROFILE: ", profile);
+    //console.log("PROFILE: ", profile);
 
     try {
       // this callback is executed when Google sends us a successfull response back (through the redirect url)

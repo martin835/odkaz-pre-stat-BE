@@ -100,7 +100,7 @@ basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
       { $push: { reviews: _id } },
       { new: true }
     );
-    console.log(serviceToReview);
+    //console.log(serviceToReview);
 
     res.status(201).send({ _id });
   } catch (error) {

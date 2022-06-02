@@ -41,7 +41,7 @@ servicesRouter.post("/", async (req, res, next) => {
         { $push: { services: _id } },
         { new: true }
       );
-    console.log("SERVICE ADDED TO KC: ", clientCenterToAddServiceTo);
+    //console.log("SERVICE ADDED TO KC: ", clientCenterToAddServiceTo);
 
     res.status(201).send({ _id });
   } catch (error) {

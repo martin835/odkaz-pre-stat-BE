@@ -51,14 +51,14 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
 });
 
 usersRouter.post("/login", async (req, res, next) => {
-  console.log(req.body);
+  //console.log(req.body);
   try {
     //1. Obtain credentials from req.body
     const { email, password } = req.body;
 
     //2. Verify credentials
     const user = await UserModel.checkCredentials(email, password);
-    console.log(user);
+    //console.log(user);
     if (user) {
       const accessToken = await generateAccessToken({
         _id: user._id,
@@ -74,7 +74,7 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 
 usersRouter.post("/register", async (req, res, next) => {
-  console.log(req.body);
+  //console.log(req.body);
   try {
     //1 - create a new user in DB, verification status =  verified:false (default)
     const newUser = new UserModel({
@@ -119,7 +119,7 @@ usersRouter.get(
   passport.authenticate("google"),
   async (req, res, next) => {
     try {
-      console.log("Token: ", req.user.token);
+      // console.log("Token: ", req.user.token);
       //res.send({ accessToken: req.user.token });
       res.redirect(`${process.env.FE_DEV_URL}?accessToken=${req.user.token}`);
     } catch (error) {
@@ -140,14 +140,14 @@ usersRouter.post(
         { new: true }
       );
 
-      console.log("User should be veriefied here: ", verifiedUser);
+      //console.log("User should be veriefied here: ", verifiedUser);
       if (verifiedUser) {
         //Here I can find user by ID, and generate AccessToken  with _id and role
         const accessToken = await generateAccessToken({
           _id: verifiedUser._id,
           role: verifiedUser.role,
         });
-        console.log(accessToken);
+        // console.log(accessToken);
         //Then, I can send the access token in the res.send(veirifiedUser, accessToken)
         res.send({ accessToken: accessToken, verifiedUser });
       } else {

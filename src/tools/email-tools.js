@@ -3,7 +3,7 @@ import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 export const sendRegistrationEmail = async (body) => {
-  console.log("recieved body:", body);
+  //console.log("recieved body:", body);
   const msg = {
     //normally recipient email will come from request.author.email;
     // ⬇️ ⬇️ ⬇️ this is just for the testing purposes
