@@ -139,9 +139,17 @@ usersRouter.post(
         { verified: true },
         { new: true }
       );
+
       console.log("User should be veriefied here: ", verifiedUser);
       if (verifiedUser) {
-        res.send(verifiedUser);
+        //Here I can find user by ID, and generate AccessToken  with _id and role
+        const accessToken = await generateAccessToken({
+          _id: verifiedUser._id,
+          role: verifiedUser.role,
+        });
+        console.log(accessToken);
+        //Then, I can send the access token in the res.send(veirifiedUser, accessToken)
+        res.send({ accessToken: accessToken, verifiedUser });
       } else {
         next(createError(401, `Something went wrong with user verification!`));
       }
