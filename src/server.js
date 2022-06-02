@@ -4,6 +4,7 @@ import app from "./app.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
 import { verifyAccessToken } from "./auth/tools.js";
+import UserModel from "./services/models/user-model.js";
 
 let onlineUsers = [];
 let onlineAdmins = [];
@@ -34,25 +35,50 @@ io.on("connection", async (socket) => {
   const payload = await verifyAccessToken(token);
   console.log(" 📦📦📦 PAYLOAD WE GOT VIA SOCKET: ", payload);
 
-  if (payload.role === "admin" && !onlineAdmins.includes(payload._id)) {
-    onlineAdmins.push(payload._id);
+  if (payload.role === "admin" /* && !onlineAdmins.includes(payload._id) */) {
+    const user = await UserModel.findById({ _id: payload._id });
+
+    if (onlineAdmins.length > 0) {
+      for (let i = 0; i < onlineAdmins.length; i++) {
+        if (onlineAdmins[i]._id.toString() !== user._id.toString()) {
+          onlineAdmins.push(user);
+        }
+      }
+    } else if (onlineAdmins.length === 0) {
+      onlineAdmins.push(user);
+    }
   } else if (
-    payload.role === "basicUser" &&
-    !onlineUsers.includes(payload._id)
+    payload.role === "basicUser" /* &&
+    !onlineUsers.includes(payload._id) */
   ) {
-    onlineUsers.push(payload._id);
+    const user = await UserModel.findById({ _id: payload._id });
+
+    if (onlineUsers.length > 0) {
+      for (let i = 0; i < onlineUsers.length; i++) {
+        if (onlineUsers[i]._id.toString() === payload._id) continue;
+        else onlineUsers.push(user);
+      }
+    } else if (onlineUsers.length === 0) {
+      onlineUsers.push(user);
+    }
   }
 
   console.log(" 📻 👤 ONLINE USERS: ", onlineUsers);
   console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
 
   socket.emit("onlineAdmins", onlineAdmins);
+  socket.emit("onlineUsers", onlineUsers);
 
   socket.on("disconnect", () => {
     console.log(`❌ disconnected`);
-    onlineUsers = onlineUsers.filter((user) => user !== payload._id);
-    onlineAdmins = onlineUsers.filter((admin) => admin !== payload._id);
+    onlineUsers = onlineUsers.filter(
+      (user) => user._id.toString() !== payload._id
+    );
+    onlineAdmins = onlineAdmins.filter(
+      (admin) => admin._id.toString() !== payload._id
+    );
     console.log(" 📻 ONLINE USERS: ", onlineUsers);
+    console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
   });
 });
 
