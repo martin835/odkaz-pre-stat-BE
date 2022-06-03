@@ -49,10 +49,10 @@ io.on("connection", async (socket) => {
     ) {
       onlineAdmins.push(user);
     } else if (onlineAdmins.length === 0) {
-      console.log(
-        "ONLINE ADMINS LENGHT IS 0 so I push this one to array:",
-        user
-      );
+      // console.log(
+      //   "ONLINE ADMINS LENGHT IS 0 so I push this one to array:",
+      //   user
+      // );
       onlineAdmins.push(user);
     }
   } else if (payload.role === "basicUser") {
@@ -73,22 +73,22 @@ io.on("connection", async (socket) => {
     }
   }
 
-  console.log(" 📻 👤 ONLINE USERS: ", onlineUsers);
-  console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
+  // console.log(" 📻 👤 ONLINE USERS: ", onlineUsers);
+  // console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
 
   socket.emit("onlineAdmins", onlineAdmins);
   socket.emit("onlineUsers", onlineUsers);
 
   socket.on("disconnect", () => {
-    console.log(`❌ disconnected`);
+    //console.log(`❌ disconnected`);
     onlineUsers = onlineUsers.filter(
       (user) => user._id.toString() !== payload._id
     );
     onlineAdmins = onlineAdmins.filter(
       (admin) => admin._id.toString() !== payload._id
     );
-    console.log(" 📻 ONLINE USERS: ", onlineUsers);
-    console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
+    // console.log(" 📻 ONLINE USERS: ", onlineUsers);
+    // console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
   });
 });
 
