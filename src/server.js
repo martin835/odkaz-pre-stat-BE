@@ -35,8 +35,11 @@ io.on("connection", async (socket) => {
   const payload = await verifyAccessToken(token);
   //console.log(" 📦📦📦 PAYLOAD WE GOT VIA SOCKET: ", payload);
 
-  if (payload.role === "admin" /* && !onlineAdmins.includes(payload._id) */) {
-    const user = await UserModel.findById({ _id: payload._id });
+  if (payload.role === "admin") {
+    const user = await UserModel.findById(
+      { _id: payload._id },
+      "_id avatar name"
+    );
 
     if (
       onlineAdmins.length > 0 &&
@@ -52,11 +55,11 @@ io.on("connection", async (socket) => {
       );
       onlineAdmins.push(user);
     }
-  } else if (
-    payload.role === "basicUser" /* &&
-    !onlineUsers.includes(payload._id) */
-  ) {
-    const user = await UserModel.findById({ _id: payload._id });
+  } else if (payload.role === "basicUser") {
+    const user = await UserModel.findById(
+      { _id: payload._id },
+      "_id avatar name"
+    );
 
     if (
       onlineUsers.length > 0 &&
