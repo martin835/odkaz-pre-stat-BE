@@ -43,6 +43,8 @@ chatRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
 
     console.log("SENDER: ", req.user._id);
     console.log("RECIPIENT: ", req.body.recipient);
+
+    //There should be always exactly one chat, but this can be a preparation for group chats.
     const commonChats = await ChatModel.find({
       members: { $all: [req.user._id, req.body.recipient] },
     });
