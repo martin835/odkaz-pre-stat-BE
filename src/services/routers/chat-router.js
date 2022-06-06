@@ -127,14 +127,14 @@ chatRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
 chatRouter.get("/:id", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const chat = await ChatModel.findById(req.params.id)
-      .populate({ path: "members" })
+      .populate({ path: "members", select: "name _id avatar" })
       .populate({
         path: "messages",
         //populate: { path: "sender", select: "name _id avatar" },
       });
 
     if (chat) {
-      res.status(200).send(chat.messages);
+      res.status(200).send(chat);
     } else {
       next(createError(404, `Chat with id: ${req.params.id} not found`));
     }
