@@ -124,14 +124,14 @@ chatRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
 
 // ACTIVE ENDPOINT - 4 - Returns full message history for a specific chat
 
-chatRouter.get("/:id", async (req, res, next) => {
+chatRouter.get("/:id", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const chat = await ChatModel.findById(req.params.id)
       .populate({ path: "members" })
       .populate({ path: "messages" });
 
     if (chat) {
-      res.status(200).send(chat);
+      res.status(200).send(chat.messages);
     } else {
       next(createError(404, `Chat with id: ${req.params.id} not found`));
     }

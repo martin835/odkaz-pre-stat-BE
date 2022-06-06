@@ -31,7 +31,7 @@ io.on("connection", async (socket) => {
   //console.log("🤝 HANDSHAKE - is there a token ?", socket.handshake);
   //This is probably a good check to have, but crashes the app if it happes...
   //...some error handler should be added...  ⬇️⬇️⬇️👇👇👇
-  console.log(socket.handshake.auth.token);
+  //console.log(socket.handshake.auth.token);
   if (socket.handshake.auth.token) {
     const token = socket.handshake.auth.token;
     const payload = await verifyAccessToken(token);
