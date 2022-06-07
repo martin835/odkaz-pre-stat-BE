@@ -133,6 +133,11 @@ io.on("connection", async (socket) => {
   } else if (!socket.handshake.auth.token) {
     socket.disconnect();
     console.log(`❌ socket ${socket.id} disconnected`);
+
+    socket.emit("onlineAdmins", onlineAdmins);
+    //socket.emit("onlineUsers", onlineUsers)
+    // console.log(" 📻 ONLINE USERS: ", onlineUsers);
+    console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
   }
 });
 
