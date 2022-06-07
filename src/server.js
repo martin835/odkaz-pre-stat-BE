@@ -32,6 +32,14 @@ io.on("connection", async (socket) => {
   //This is probably a good check to have, but crashes the app if it happes...
   //...some error handler should be added...  ⬇️⬇️⬇️👇👇👇
   //console.log(socket.handshake.auth.token);
+  socket.on("updatedOnlineAdmins", (adminId) => {
+    console.log("ADMIN ID TO KICK OUT: ", adminId);
+    onlineAdmins = onlineAdmins.filter(
+      (admin) => admin._id.toString() !== adminId
+    );
+    console.log("DID I HAPPENED?", onlineAdmins);
+    socket.emit("onlineAdmins", onlineAdmins);
+  });
   if (socket.handshake.auth.token) {
     const token = socket.handshake.auth.token;
     const payload = await verifyAccessToken(token);
@@ -77,7 +85,6 @@ io.on("connection", async (socket) => {
 
     // console.log(" 📻 👤 ONLINE USERS: ", onlineUsers);
     console.log(" 📻 👨‍💻 ONLINE ADMINS 1: ", onlineAdmins);
-
     socket.emit("onlineAdmins", onlineAdmins);
     //socket.emit("onlineUsers", onlineUsers);
 
@@ -133,12 +140,12 @@ io.on("connection", async (socket) => {
   } else if (!socket.handshake.auth.token) {
     socket.disconnect();
     console.log(`❌ socket ${socket.id} disconnected`);
-
     socket.emit("onlineAdmins", onlineAdmins);
     //socket.emit("onlineUsers", onlineUsers)
     // console.log(" 📻 ONLINE USERS: ", onlineUsers);
     console.log(" 📻 👨‍💻 ONLINE ADMINS 3: ", onlineAdmins);
   }
+  console.log(" 📻 👨‍💻 ONLINE ADMINS 4: ", onlineAdmins);
 });
 
 mongoose.connect(process.env.MONGO_CONNECTION);
