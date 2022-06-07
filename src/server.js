@@ -76,7 +76,7 @@ io.on("connection", async (socket) => {
     }
 
     // console.log(" 📻 👤 ONLINE USERS: ", onlineUsers);
-    console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
+    console.log(" 📻 👨‍💻 ONLINE ADMINS 1: ", onlineAdmins);
 
     socket.emit("onlineAdmins", onlineAdmins);
     //socket.emit("onlineUsers", onlineUsers);
@@ -128,7 +128,7 @@ io.on("connection", async (socket) => {
       socket.emit("onlineAdmins", onlineAdmins);
       //socket.emit("onlineUsers", onlineUsers)
       // console.log(" 📻 ONLINE USERS: ", onlineUsers);
-      console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
+      console.log(" 📻 👨‍💻 ONLINE ADMINS 2: ", onlineAdmins);
     });
   } else if (!socket.handshake.auth.token) {
     socket.disconnect();
@@ -137,7 +137,7 @@ io.on("connection", async (socket) => {
     socket.emit("onlineAdmins", onlineAdmins);
     //socket.emit("onlineUsers", onlineUsers)
     // console.log(" 📻 ONLINE USERS: ", onlineUsers);
-    console.log(" 📻 👨‍💻 ONLINE ADMINS: ", onlineAdmins);
+    console.log(" 📻 👨‍💻 ONLINE ADMINS 3: ", onlineAdmins);
   }
 });
 
