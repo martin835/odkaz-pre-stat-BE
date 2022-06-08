@@ -76,10 +76,10 @@ io.on("connection", async (socket) => {
       }
     }
 
-    // console.log(" 📻 👤 ONLINE USERS: ", onlineUsers);
-    console.log(" 📻 👨‍💻 ONLINE ADMINS 1: ", onlineAdmins);
+    console.log(" 📻 👤 ONLINE USERS 1: ", onlineUsers);
+    //console.log(" 📻 👨‍💻 ONLINE ADMINS 1: ", onlineAdmins);
     socket.broadcast.emit("onlineAdmins", onlineAdmins);
-    //socket.emit("onlineUsers", onlineUsers);
+    socket.broadcast.emit("onlineUsers", onlineUsers);
 
     // grabbing chats for this user....
     const userChats = await ChatModel.find({
@@ -117,7 +117,7 @@ io.on("connection", async (socket) => {
       socket.to(chat).emit("incomingMessage", { newMessage });
     });
 
-    // 0 = removing, 1 = adding
+    //Updating onlineAdmins ⚠️ ⚠️ ⚠️-- uncecessary - needs refactor 0 = removing, 1 = adding
     socket.on("updatedOnlineAdmins", async (addingOrRemoving, adminId) => {
       if (addingOrRemoving === 0) {
         console.log("ADMIN ID TO KICK OUT: ", adminId);
@@ -139,6 +139,29 @@ io.on("connection", async (socket) => {
       }
     });
 
+    //Updating onlineAdmins ⚠️ ⚠️ ⚠️-- uncecessary - n
+
+    socket.on("updatedOnlineUsers", async (addingOrRemoving, userId) => {
+      if (addingOrRemoving === 0) {
+        console.log("USER ID TO KICK OUT: ", userId);
+        onlineUsers = onlineUsers.filter(
+          (user) => user._id.toString() !== userId
+        );
+        console.log("DID I HAPPENED?", onlineUsers);
+        socket.broadcast.emit("onlineUsers", onlineUsers);
+        //⚠️ ⚠️ ⚠️  This whole piece with adding 1 / removing 0 is not needed,  on logging in I am broadcasting all online admins / users ....
+      } else if (addingOrRemoving === 1) {
+        const user = await UserModel.findById(
+          { _id: userId },
+          "_id avatar name"
+        );
+        console.log("USER ID TO ADD: ", user);
+        onlineAdmins.push(user);
+        console.log("DID I HAPPENED?", onlineUsers);
+        socket.broadcast.emit("onlineAdmins", onlineUsers);
+      }
+    });
+
     socket.on("disconnect", () => {
       console.log(`❌ ${socket.id} disconnected`);
       onlineUsers = onlineUsers.filter(
@@ -148,19 +171,19 @@ io.on("connection", async (socket) => {
         (admin) => admin._id.toString() !== payload._id
       );
       socket.broadcast.emit("onlineAdmins", onlineAdmins);
-      //socket.emit("onlineUsers", onlineUsers)
-      // console.log(" 📻 ONLINE USERS: ", onlineUsers);
-      console.log(" 📻 👨‍💻 ONLINE ADMINS 2: ", onlineAdmins);
+      socket.broadcast.emit("onlineUsers", onlineUsers);
+      console.log(" 📻 ONLINE USERS 2: ", onlineUsers);
+      //console.log(" 📻 👨‍💻 ONLINE ADMINS 2: ", onlineAdmins);
     });
   } else if (!socket.handshake.auth.token) {
     socket.disconnect();
     console.log(`❌ socket ${socket.id} disconnected`);
     //socket.emit("onlineAdmins", onlineAdmins);
     //socket.emit("onlineUsers", onlineUsers)
-    // console.log(" 📻 ONLINE USERS: ", onlineUsers);
-    console.log(" 📻 👨‍💻 ONLINE ADMINS 3: ", onlineAdmins);
+    console.log(" 📻 ONLINE USERS 3: ", onlineUsers);
+    //console.log(" 📻 👨‍💻 ONLINE ADMINS 3: ", onlineAdmins);
   }
-  console.log(" 📻 👨‍💻 ONLINE ADMINS 4: ", onlineAdmins);
+  //console.log(" 📻 👨‍💻 ONLINE ADMINS 4: ", onlineAdmins);
 });
 
 mongoose.connect(process.env.MONGO_CONNECTION);
