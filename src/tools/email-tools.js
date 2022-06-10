@@ -16,6 +16,12 @@ export const sendRegistrationEmail = async (body) => {
      <strong><a href=${body.link}>Overiť email</a></strong> 
      <p>Pekný deň praje,</p>
      <p>tím Odkaz štátu</p>
+     <div>------------------<strong>English</strong>------------------</div>
+     <h3>Hello ${body.name},</h3>
+    <p>finish the registration by clicking the activation link: </p>
+     <strong><a href=${body.link}>Overiť email</a></strong> 
+     <p>Have a great day,</p>
+     <p>team Tell the Government</p>
     `,
   };
 
