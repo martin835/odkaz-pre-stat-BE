@@ -1,6 +1,9 @@
 import express from "express";
 import createError from "http-errors";
 import passport from "passport";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
 import {
   checkEmailMiddleware,
   JWTAuthMiddleware,
@@ -14,6 +17,17 @@ import {
 import { sendRegistrationEmail } from "../../tools/email-tools.js";
 
 const usersRouter = express.Router();
+
+const cloudStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "users-avatars",
+  },
+});
+const cloudMulterAvatar = multer({
+  storage: cloudStorage,
+  limits: { fileSize: 3145728 },
+});
 
 usersRouter.get("/", async (req, res, next) => {
   console.log("📨 PING - GET REQUEST");
@@ -49,6 +63,29 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
+//Endpoint for uploading new avatar
+usersRouter.post(
+  "/me/avatar",
+  JWTAuthMiddleware,
+  cloudMulterAvatar.single("avatar"),
+  async (req, res, next) => {
+    try {
+      console.log("req: ", req);
+      console.log("req file: ", req.file);
+      const user = await UserModel.findByIdAndUpdate(
+        req.user._id,
+        { avatar: req.file.path },
+        { new: true }
+      );
+
+      res.send(user);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
 
 usersRouter.post("/login", async (req, res, next) => {
   //console.log(req.body);

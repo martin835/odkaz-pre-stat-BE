@@ -45,6 +45,7 @@ io.on("connection", async (socket) => {
       );
 
       if (
+        //This condition is filtering out duplicates from array which are probably created because of multiple sockets coming from frontend
         onlineAdmins.length > 0 &&
         onlineAdmins.filter(
           (admin) => admin._id.toString() === user._id.toString()
@@ -65,6 +66,7 @@ io.on("connection", async (socket) => {
       );
 
       if (
+        //This condition is filtering out duplicates from array which are probably created because of multiple sockets coming from frontend
         onlineUsers.length > 0 &&
         onlineUsers.filter(
           (basicUser) => basicUser._id.toString() === user._id.toString()
