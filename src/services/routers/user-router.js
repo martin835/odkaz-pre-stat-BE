@@ -19,7 +19,7 @@ import { sendRegistrationEmail } from "../../tools/email-tools.js";
 const usersRouter = express.Router();
 
 const cloudStorage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinary,
   params: {
     folder: "users-avatars",
   },
@@ -71,8 +71,8 @@ usersRouter.post(
   cloudMulterAvatar.single("avatar"),
   async (req, res, next) => {
     try {
-      console.log("req: ", req);
-      console.log("req file: ", req.file);
+      //console.log("req: ", req);
+      //console.log("req file: ", req.file);
       const user = await UserModel.findByIdAndUpdate(
         req.user._id,
         { avatar: req.file.path },

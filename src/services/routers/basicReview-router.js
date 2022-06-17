@@ -10,9 +10,9 @@ const basicReviewRouter = express.Router();
 
 //1. Get all Reviews in the DB
 basicReviewRouter.get("/", async (req, res, next) => {
-  console.log("📨 PING - GET REQUEST");
-  console.log("REQ QUERY: ", req.query);
-  console.log("QUERY-TO-MONGO: ", q2m(req.query));
+  // console.log("📨 PING - GET REQUEST");
+  // console.log("REQ QUERY: ", req.query);
+  // console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
     const mongoQuery = q2m(req.query);
     const reviews = await BasicReviewModel.find(
