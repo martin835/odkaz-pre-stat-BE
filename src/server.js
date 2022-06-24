@@ -93,7 +93,7 @@ io.on("connection", async (socket) => {
     // );
 
     const chats = userChats.map((chat) => chat._id.toString());
-    //console.log("THIS IS ARRAY WITH CHAT IDs TO JOIN: ", chats);
+    console.log("THIS IS ARRAY WITH CHAT IDs TO JOIN: ", chats);
     socket.join(chats);
 
     socket.on("outgoingMessage", async ({ data, chat }) => {
@@ -116,7 +116,12 @@ io.on("connection", async (socket) => {
         { $push: { messages: _id } }
       );
 
-      socket.to(chat).emit("incomingMessage", { newMessage });
+      //If chats.length === 0  send private message  ,  else emit into chat
+      if (chats.length === 0) {
+        //send private message ??
+      } else {
+        socket.in(chat).emit("incomingMessage", { newMessage });
+      }
     });
 
     //Updating onlineAdmins ⚠️ ⚠️ ⚠️-- uncecessary - needs refactor 0 = removing, 1 = adding
