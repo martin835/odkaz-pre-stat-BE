@@ -44,6 +44,11 @@ io.on("connection", async (socket) => {
         "_id avatar name"
       );
 
+      //for admins, I want to broadcast their socker, so user can send them PM, when they don't have a chat yet (first time when chat is created).
+      //for users I don't do this, because admin cannot send first PM to a user
+      //const adminToPush = { ...user.toObject(), adminSocketID: socket.id };
+      //console.log("ADMIN TO PUSH: ", adminToPush);
+
       if (
         //This condition is filtering out duplicates from array which are probably created because of multiple sockets coming from frontend
         onlineAdmins.length > 0 &&
@@ -78,10 +83,12 @@ io.on("connection", async (socket) => {
       }
     }
 
-    console.log(" 📻 👤 ONLINE USERS 1: ", onlineUsers);
+    //console.log(" 📻 👤 ONLINE USERS 1: ", onlineUsers);
     //console.log(" 📻 👨‍💻 ONLINE ADMINS 1: ", onlineAdmins);
     socket.broadcast.emit("onlineAdmins", onlineAdmins);
     socket.broadcast.emit("onlineUsers", onlineUsers);
+
+    //JOINING CHATS START 💬💬💬
 
     // grabbing chats for this user....
     const userChats = await ChatModel.find({
@@ -95,6 +102,11 @@ io.on("connection", async (socket) => {
     const chats = userChats.map((chat) => chat._id.toString());
     console.log("THIS IS ARRAY WITH CHAT IDs TO JOIN: ", chats);
     socket.join(chats);
+    socket.join(payload._id);
+
+    console.log("JOINED CHATS: ", socket.rooms);
+
+    //JOINING CHATS END 💬💬💬
 
     socket.on("outgoingMessage", async ({ data, chat }) => {
       console.log("MESSAGE FROM FE: ", data);
@@ -116,12 +128,7 @@ io.on("connection", async (socket) => {
         { $push: { messages: _id } }
       );
 
-      //If chats.length === 0  send private message  ,  else emit into chat
-      if (chats.length === 0) {
-        //send private message ??
-      } else {
-        socket.in(chat).emit("incomingMessage", { newMessage });
-      }
+      socket.to(chat).emit("incomingMessage", { newMessage });
     });
 
     //Updating onlineAdmins ⚠️ ⚠️ ⚠️-- uncecessary - needs refactor 0 = removing, 1 = adding
