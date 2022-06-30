@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const { Schema, model } = mongoose;
 
@@ -16,6 +17,7 @@ const UserSchema = new Schema(
       enum: ["admin", "serviceProvider", "basicUser"],
       default: "basicUser",
     },
+    verified: { type: Boolean, default: false },
     // reviews: [
     //   {
     //     type: mongoose.Types.ObjectId,

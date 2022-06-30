@@ -14,6 +14,7 @@ import servicesRouter from "./services/routers/service-router.js";
 import usersRouter from "./services/routers/user-router.js";
 import googleStrategy from "./auth/OAuth.js";
 import basicReviewCommentsRouter from "./services/routers/basicReviewComments-router.js";
+import chatRouter from "./services/routers/chat-router.js";
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use(passport.initialize());
 
 app.use("/services", servicesRouter);
 app.use("/users", usersRouter);
+app.use("/chats", chatRouter);
 app.use("/clientCenters", clientCenterRouter);
 app.use("/reviews", [basicReviewRouter, basicReviewCommentsRouter]);
 

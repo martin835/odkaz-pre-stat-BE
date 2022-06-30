@@ -1,11 +1,33 @@
 import express from "express";
 import createError from "http-errors";
 import passport from "passport";
-import { JWTAuthMiddleware } from "../../auth/JWTMiddleware.js";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
+import {
+  checkEmailMiddleware,
+  JWTAuthMiddleware,
+} from "../../auth/JWTMiddleware.js";
 import UserModel from "../models/user-model.js";
 import googleStrategy from "../../auth/OAuth.js";
+import {
+  generateAccessToken,
+  generateAccessTokenForEmailVerification,
+} from "../../auth/tools.js";
+import { sendRegistrationEmail } from "../../tools/email-tools.js";
 
 const usersRouter = express.Router();
+
+const cloudStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "users-avatars",
+  },
+});
+const cloudMulterAvatar = multer({
+  storage: cloudStorage,
+  limits: { fileSize: 3145728 },
+});
 
 usersRouter.get("/", async (req, res, next) => {
   console.log("📨 PING - GET REQUEST");
@@ -42,6 +64,85 @@ usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
+//Endpoint for uploading new avatar
+usersRouter.post(
+  "/me/avatar",
+  JWTAuthMiddleware,
+  cloudMulterAvatar.single("avatar"),
+  async (req, res, next) => {
+    try {
+      //console.log("req: ", req);
+      //console.log("req file: ", req.file);
+      const user = await UserModel.findByIdAndUpdate(
+        req.user._id,
+        { avatar: req.file.path },
+        { new: true }
+      );
+
+      res.send(user);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
+
+usersRouter.post("/login", async (req, res, next) => {
+  //console.log(req.body);
+  try {
+    //1. Obtain credentials from req.body
+    const { email, password } = req.body;
+
+    //2. Verify credentials
+    const user = await UserModel.checkCredentials(email, password);
+    //console.log(user);
+    if (user) {
+      const accessToken = await generateAccessToken({
+        _id: user._id,
+        role: user.role,
+      });
+      res.send({ accessToken });
+    } else {
+      next(createError(401, `Wrong login / registration credentials!`));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+usersRouter.post("/register", async (req, res, next) => {
+  //console.log(req.body);
+  try {
+    //1 - create a new user in DB, verification status =  verified:false (default)
+    const newUser = new UserModel({
+      ...req.body,
+      avatar: "https://freesvg.org/img/Yoda.png",
+    });
+
+    const { _id, email, name } = await newUser.save();
+    //res.status(201).send({ _id });
+    //2 - generate JWT token and insert it into URL
+
+    const emailVerificationToken =
+      await generateAccessTokenForEmailVerification({
+        _id: _id,
+      });
+    //3 - send email with link including JWT token in params
+
+    const body = {
+      email: email,
+      name: name,
+      link: `${process.env.FE_DEV_URL}/verify-email/?emailVerificationToken=${emailVerificationToken}`,
+    };
+
+    await sendRegistrationEmail(body);
+
+    res.send({ message: "Verification e-mail should be sent!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 usersRouter.get(
   "/googleLogin",
   passport.authenticate("google", {
@@ -55,7 +156,7 @@ usersRouter.get(
   passport.authenticate("google"),
   async (req, res, next) => {
     try {
-      console.log("Token: ", req.user.token);
+      // console.log("Token: ", req.user.token);
       //res.send({ accessToken: req.user.token });
       res.redirect(`${process.env.FE_DEV_URL}?accessToken=${req.user.token}`);
     } catch (error) {
@@ -64,10 +165,41 @@ usersRouter.get(
   }
 );
 
-usersRouter.get("/:id", async (req, res, next) => {
+usersRouter.post(
+  "/verify-email",
+  checkEmailMiddleware,
+  async (req, res, next) => {
+    // console.log(" 👽 1 ?");
+    try {
+      const verifiedUser = await UserModel.findByIdAndUpdate(
+        { _id: req.user._id },
+        { verified: true },
+        { new: true }
+      );
+
+      //console.log("User should be veriefied here: ", verifiedUser);
+      if (verifiedUser) {
+        //Here I can find user by ID, and generate AccessToken  with _id and role
+        const accessToken = await generateAccessToken({
+          _id: verifiedUser._id,
+          role: verifiedUser.role,
+        });
+        // console.log(accessToken);
+        //Then, I can send the access token in the res.send(veirifiedUser, accessToken)
+        res.send({ accessToken: accessToken, verifiedUser });
+      } else {
+        next(createError(401, `Something went wrong with user verification!`));
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+usersRouter.get("/:userId", async (req, res, next) => {
   console.log("📨 PING - GET REQUEST");
   try {
-    const user = await UserModel.findById({ _id: req.params.id });
+    const user = await UserModel.findById({ _id: req.params.userId });
 
     res.send(user);
   } catch (error) {
