@@ -88,7 +88,7 @@ io.on("connection", async (socket) => {
     socket.broadcast.emit("onlineAdmins", onlineAdmins);
     socket.broadcast.emit("onlineUsers", onlineUsers);
 
-    //JOINING CHATS START 💬💬💬
+    //🚀 JOINING CHATS START 💬💬💬
 
     // grabbing chats for this user....
     const userChats = await ChatModel.find({
@@ -102,16 +102,27 @@ io.on("connection", async (socket) => {
     const chats = userChats.map((chat) => chat._id.toString());
     console.log("THIS IS ARRAY WITH CHAT IDs TO JOIN: ", chats);
     socket.join(chats);
+    // #fixing first time create chat -> I am joining a room labeled with my userId  , so if someone wants to chat with me,  just needs to emit my user id and join it
     socket.join(payload._id);
+
+    socket.on("joinNewChat", (recipientId) => {
+      // #fixing first time create chat here I should be joining the room that my recipient is in
+      console.log("joiniiiiiiing");
+      socket.join(recipientId);
+    });
 
     console.log("JOINED CHATS: ", socket.rooms);
 
-    //JOINING CHATS END 💬💬💬
+    //❌ JOINING CHATS END 💬💬💬
 
-    socket.on("outgoingMessage", async ({ data, chat }) => {
+    //🚀 ✉️✉️✉️ HANDLING MESSAGES START
+
+    socket.on("outgoingMessage", async ({ data, chat, recipient }) => {
       console.log("MESSAGE FROM FE: ", data);
       console.log("CHAT ID: ", chat);
       console.log("payload._id (= user id): ", payload._id);
+      // #fixing first time create chat ->  here I need to get other member of the chat, ie. the recipient, so I can emit to his "room" in case the chat haven't existed before
+      console.log("RECIPIENT: ", recipient);
 
       const message = {
         sender: mongoose.Types.ObjectId(payload._id),
@@ -121,15 +132,20 @@ io.on("connection", async (socket) => {
       const newMessage = new ChatMessageModel(message);
       const { _id } = await newMessage.save();
 
-      //console.log("MESSAGE IM TRYING TO PUSH TO DB: ", message);
       // here we will save the message to our database...
       await ChatModel.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(chat) },
         { $push: { messages: _id } }
       );
 
-      socket.to(chat).emit("incomingMessage", { newMessage });
+      socket
+        .to(chat)
+        .to(recipient)
+        .to(payload._id)
+        .emit("incomingMessage", { newMessage });
     });
+
+    //❌ ✉️✉️✉️ HANDLING MESSAGES END
 
     //Updating onlineAdmins ⚠️ ⚠️ ⚠️-- uncecessary - needs refactor 0 = removing, 1 = adding
     socket.on("updatedOnlineAdmins", async (addingOrRemoving, adminId) => {
