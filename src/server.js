@@ -20,7 +20,7 @@ if (!process.env.MONGO_CONNECTION) {
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  origin: "https://localhost:3000",
+  origin: process.env.FE_DEV_URL,
   methods: ["GET", "POST"],
   credentials: true,
 });
