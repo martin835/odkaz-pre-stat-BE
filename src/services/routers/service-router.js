@@ -8,7 +8,7 @@ import ClientCenterModel from "../models/clientCenter-model.js";
 const servicesRouter = express.Router();
 
 servicesRouter.get("/", async (req, res, next) => {
-  console.log("📨 PING - GET ALL SERVICES REQUEST");
+  //console.log("📨 PING - GET ALL SERVICES REQUEST");
 
   console.log("REQ QUERY: ", req.query);
   console.log("QUERY-TO-MONGO: ", q2m(req.query));
@@ -30,7 +30,7 @@ servicesRouter.get("/", async (req, res, next) => {
 });
 
 servicesRouter.post("/", async (req, res, next) => {
-  console.log("📨 PING - POST REQUEST");
+  //console.log("📨 PING - POST REQUEST");
   try {
     const newService = new ServiceModel(req.body);
     const { _id } = await newService.save();

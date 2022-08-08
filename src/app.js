@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import passport from "passport";
+import morgan from "morgan";
 import {
   badRequestHandler,
   forbiddenHandler,
@@ -47,6 +48,7 @@ app.use(
 
 app.use(express.json());
 app.use(passport.initialize());
+app.use(morgan("common"));
 
 //***********************************Endpoints*********************************************************/
 

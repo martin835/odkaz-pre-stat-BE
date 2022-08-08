@@ -6,7 +6,7 @@ import ClientCenterModel from "../models/clientCenter-model.js";
 const clientCenterRouter = express.Router();
 
 clientCenterRouter.get("/", async (req, res, next) => {
-  console.log("📨 PING - GET REQUEST");
+  //console.log("📨 PING - GET REQUEST");
   try {
     const clientCenters = await ClientCenterModel.find({}).populate({
       path: "services",
@@ -19,7 +19,7 @@ clientCenterRouter.get("/", async (req, res, next) => {
 });
 
 clientCenterRouter.post("/", async (req, res, next) => {
-  console.log("📨 PING - POST REQUEST");
+  //console.log("📨 PING - POST REQUEST");
   try {
     const newClientCenter = new ClientCenterModel(req.body);
     const { _id } = await newClientCenter.save();
@@ -30,7 +30,7 @@ clientCenterRouter.post("/", async (req, res, next) => {
 });
 
 clientCenterRouter.get("/:id", async (req, res, next) => {
-  console.log("📨 PING - GET CLIENTCENTER/ID REQUEST");
+  //console.log("📨 PING - GET CLIENTCENTER/ID REQUEST");
   try {
     const clientCenter = await ClientCenterModel.findById(
       req.params.id

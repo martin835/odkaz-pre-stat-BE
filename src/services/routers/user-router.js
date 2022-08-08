@@ -30,7 +30,7 @@ const cloudMulterAvatar = multer({
 });
 
 usersRouter.get("/", async (req, res, next) => {
-  console.log("📨 PING - GET REQUEST");
+  //console.log("📨 PING - GET REQUEST");
   try {
     const users = await UserModel.find({}).populate({ path: "reviews" });
 
@@ -41,7 +41,7 @@ usersRouter.get("/", async (req, res, next) => {
 });
 
 usersRouter.post("/", async (req, res, next) => {
-  console.log("📨 PING - POST REQUEST");
+  //console.log("📨 PING - POST REQUEST");
   try {
     const newUser = new UserModel(req.body);
     const { _id } = await newUser.save();
@@ -197,7 +197,7 @@ usersRouter.post(
 );
 
 usersRouter.get("/:userId", async (req, res, next) => {
-  console.log("📨 PING - GET REQUEST");
+  //console.log("📨 PING - GET REQUEST");
   try {
     const user = await UserModel.findById({ _id: req.params.userId });
 

@@ -12,7 +12,7 @@ basicReviewCommentsRouter.post(
   JWTAuthMiddleware,
   async (req, res, next) => {
     try {
-      console.log("➡️ PING - POST a COMMENT REQUEST");
+      //console.log("➡️ PING - POST a COMMENT REQUEST");
 
       const newComment = {
         ...req.body,
@@ -44,7 +44,7 @@ basicReviewCommentsRouter.post(
 //7 GET COMMENTS for  a Review
 basicReviewCommentsRouter.get("/:reviewId/comments", async (req, res, next) => {
   try {
-    console.log("➡️ PING - GET ALL COMMENTs REQUEST");
+    //console.log("➡️ PING - GET ALL COMMENTs REQUEST");
 
     const reviewComments = await BasicReviewModel.findById(req.params.reviewId);
     if (reviewComments) {
@@ -68,7 +68,7 @@ basicReviewCommentsRouter.get(
   JWTAuthMiddleware,
   async (req, res, next) => {
     try {
-      console.log("➡️ PING - GET a COMMENT REQUEST");
+      //console.log("➡️ PING - GET a COMMENT REQUEST");
 
       const review = await BasicReviewModel.findById(req.params.reviewId);
       if (review) {
@@ -106,7 +106,7 @@ basicReviewCommentsRouter.put(
   JWTAuthMiddleware,
   async (req, res, next) => {
     try {
-      console.log("➡️ PING - EDIT a COMMENT REQUEST");
+      //console.log("➡️ PING - EDIT a COMMENT REQUEST");
 
       const review = await BasicReviewModel.findById(req.params.reviewId);
       if (review) {
@@ -150,7 +150,7 @@ basicReviewCommentsRouter.delete(
   JWTAuthMiddleware,
   async (req, res, next) => {
     try {
-      console.log("➡️ PING - DELETE a COMMENT REQUEST");
+      //console.log("➡️ PING - DELETE a COMMENT REQUEST");
 
       const modifiedReview = await BasicReviewModel.findByIdAndUpdate(
         req.params.reviewId, //what
