@@ -9,7 +9,7 @@ const ServiceSchema = new Schema(
     name: { type: String },
     provider: {
       type: mongoose.Types.ObjectId,
-      ref: "ClientCenter",
+      ref: "Provider",
       required: true,
     },
     reviews: [{ type: mongoose.Types.ObjectId, ref: "BasicReview" }],

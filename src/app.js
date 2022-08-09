@@ -10,12 +10,12 @@ import {
   unauthorizedHandler,
 } from "./errorHandlers.js";
 import basicReviewRouter from "./services/routers/basicReview-router.js";
-import clientCenterRouter from "./services/routers/clientCenter-router.js";
+import providerRouter from "./services/routers/provider-router.js";
 import servicesRouter from "./services/routers/service-router.js";
 import usersRouter from "./services/routers/user-router.js";
 import googleStrategy from "./auth/OAuth.js";
 import basicReviewCommentsRouter from "./services/routers/basicReviewComments-router.js";
-import chatRouter from "./services/routers/chat-router.js";
+//import chatRouter from "./services/routers/chat-router.js";
 
 const app = express();
 
@@ -54,8 +54,8 @@ app.use(morgan("common"));
 
 app.use("/services", servicesRouter);
 app.use("/users", usersRouter);
-app.use("/chats", chatRouter);
-app.use("/clientCenters", clientCenterRouter);
+//app.use("/chats", chatRouter);
+app.use("/providers", providerRouter);
 app.use("/reviews", [basicReviewRouter, basicReviewCommentsRouter]);
 
 // For test purposes

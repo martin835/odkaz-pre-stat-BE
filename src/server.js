@@ -1,12 +1,6 @@
 import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
 import app from "./app.js";
-import { Server } from "socket.io";
-import { createServer } from "http";
-import { verifyAccessToken } from "./auth/tools.js";
-import UserModel from "./services/models/user-model.js";
-import ChatModel from "./services/models/chat-model.js";
-import ChatMessageModel from "./services/models/chatMessage-model.js";
 
 // Temporary arrays for chat purposes ⬇️⬇️
 // let onlineUsers = [];

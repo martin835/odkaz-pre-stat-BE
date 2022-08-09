@@ -10,4 +10,4 @@ const ChatSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("Chat", ChatSchema);
+//export default model("Chat", ChatSchema);

@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
-//import Service from "./service-model.js";
 
 const { Schema, model } = mongoose;
 
-const ClientCenterSchema = new Schema(
+const ProviderSchema = new Schema(
   {
     name: { type: String, required: true },
     district: { type: String, required: true },
@@ -13,4 +12,4 @@ const ClientCenterSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("ClientCenter", ClientCenterSchema);
+export default model("Provider", ProviderSchema);

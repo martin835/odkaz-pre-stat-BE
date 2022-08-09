@@ -3,7 +3,7 @@ import createError from "http-errors";
 import q2m from "query-to-mongo";
 import ServiceModel from "../models/service-model.js";
 import BasicReviewModel from "../models/basicReview-model.js";
-import ClientCenterModel from "../models/clientCenter-model.js";
+import ProviderModel from "../models/provider-model.js";
 
 const servicesRouter = express.Router();
 
@@ -35,13 +35,11 @@ servicesRouter.post("/", async (req, res, next) => {
     const newService = new ServiceModel(req.body);
     const { _id } = await newService.save();
 
-    const clientCenterToAddServiceTo =
-      await ClientCenterModel.findByIdAndUpdate(
-        { _id: req.body.provider },
-        { $push: { services: _id } },
-        { new: true }
-      );
-    //console.log("SERVICE ADDED TO KC: ", clientCenterToAddServiceTo);
+    const providerCenterToAddServiceTo = await ProviderModel.findByIdAndUpdate(
+      { _id: req.body.provider },
+      { $push: { services: _id } },
+      { new: true }
+    );
 
     res.status(201).send({ _id });
   } catch (error) {

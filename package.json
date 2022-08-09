@@ -2,7 +2,7 @@
   "name": "odkaz-pre-stat-be",
   "version": "1.0.0",
   "description": "Back-end for gov feedback app with NodeJs, Express, MongoDB",
-  "main": "index.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

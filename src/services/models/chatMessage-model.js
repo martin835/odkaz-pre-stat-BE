@@ -13,4 +13,4 @@ const chatMessageSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("ChatMessage", chatMessageSchema);
+//export default model("ChatMessage", chatMessageSchema);

@@ -11,7 +11,7 @@ const BasicReviewSchema = new Schema(
     provider: {
       type: mongoose.Types.ObjectId,
       required: true,
-      ref: "ClientCenter",
+      ref: "Provider",
     },
     user: { type: mongoose.Types.ObjectId, required: true, ref: "User" },
     comments: [
