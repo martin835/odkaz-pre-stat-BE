@@ -16,9 +16,9 @@ basicReviewRouter.get("/", async (req, res, next) => {
   try {
     const mongoQuery = q2m(req.query);
     const reviews = await BasicReviewModel.find(
-      mongoQuery.criteria.clientCenterId
+      mongoQuery.criteria.providerId
         ? {
-            provider: mongoQuery.criteria.clientCenterId,
+            provider: mongoQuery.criteria.providerId,
           }
         : {}
     )
@@ -30,9 +30,9 @@ basicReviewRouter.get("/", async (req, res, next) => {
 
     //if request is for specific client center calculate average rating based on available reviews.
 
-    if (mongoQuery.criteria.clientCenterId) {
+    if (mongoQuery.criteria.providerId) {
       const reviewsToCalcStats = await BasicReviewModel.find({
-        provider: mongoQuery.criteria.clientCenterId,
+        provider: mongoQuery.criteria.providerId,
       });
 
       let sumOfAllReviews = 0;
