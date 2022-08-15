@@ -114,7 +114,7 @@ basicReviewRouter.get("/stats", async (req, res, next) => {
   try {
     //get  all reviews
     const mongoQuery = q2m(req.query);
-    const averageRatingPerClientCenter = await BasicReviewModel.aggregate([
+    const averageRatingPerProvider = await BasicReviewModel.aggregate([
       {
         $group: {
           _id: "$provider",
@@ -124,15 +124,15 @@ basicReviewRouter.get("/stats", async (req, res, next) => {
       },
     ])
       .lookup({
-        from: "clientcenters",
+        from: "providers",
         localField: "_id",
         foreignField: "_id",
         as: "Provider",
       })
       .limit(mongoQuery.options.limit || 10);
 
-    //console.log(averageRatingPerClientCenter);
-    res.send(averageRatingPerClientCenter);
+    //console.log(averageRatingPerProvider);
+    res.send(averageRatingPerProvider);
   } catch (error) {
     next(error);
   }
