@@ -12,9 +12,21 @@ const basicReviewRouter = express.Router();
 basicReviewRouter.get("/", async (req, res, next) => {
   // console.log("📨 PING - GET REQUEST");
   // console.log("REQ QUERY: ", req.query);
-  // console.log("QUERY-TO-MONGO: ", q2m(req.query));
+  console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
     const mongoQuery = q2m(req.query);
+    if (mongoQuery.criteria.providerId) {
+      console.log("I carry provider ID");
+    } else if (mongoQuery.criteria.serviceId) {
+      {
+        console.log("I carry service ID");
+      }
+    } else {
+      {
+        console.log("I carry no ID");
+      }
+    }
+
     const reviews = await BasicReviewModel.find(
       mongoQuery.criteria.providerId
         ? {
@@ -153,12 +165,14 @@ basicReviewRouter.get("/stats-service", async (req, res, next) => {
           noReviews: { $count: {} },
         },
       },
-    ]).lookup({
-      from: "services",
-      localField: "_id",
-      foreignField: "_id",
-      as: "Service",
-    });
+    ])
+      .lookup({
+        from: "services",
+        localField: "_id",
+        foreignField: "_id",
+        as: "Service",
+      })
+      .limit(mongoQuery.options.limit || 10);
 
     //console.log(averageRatingPerProvider);
     res.send(averageRatingPerService);
