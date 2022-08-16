@@ -25,8 +25,8 @@ basicReviewRouter.get("/", async (req, res, next) => {
       .limit(mongoQuery.options.limit || 6)
       .skip(mongoQuery.options.skip || 0)
       .sort({ createdAt: -1 })
-      .populate({ path: "user" })
-      .populate({ path: "service" });
+      .populate({ path: "user", select: "_id name surname avatar" })
+      .populate({ path: "service", select: "_id type name" });
 
     //if request is for specific client center calculate average rating based on available reviews.
 
@@ -108,8 +108,8 @@ basicReviewRouter.post("/", JWTAuthMiddleware, async (req, res, next) => {
   }
 });
 
-//3. Get stats about reviews
-basicReviewRouter.get("/stats", async (req, res, next) => {
+//3.1 Get stats about reviews per provider
+basicReviewRouter.get("/stats-providers", async (req, res, next) => {
   //console.log("📨 PING - GET STATS REQUEST");
   try {
     //get  all reviews
@@ -133,6 +133,35 @@ basicReviewRouter.get("/stats", async (req, res, next) => {
 
     //console.log(averageRatingPerProvider);
     res.send(averageRatingPerProvider);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//3.2 Get stats about reviews per service
+
+basicReviewRouter.get("/stats-service", async (req, res, next) => {
+  //console.log("📨 PING - GET STATS REQUEST");
+  try {
+    //get  all reviews
+    const mongoQuery = q2m(req.query);
+    const averageRatingPerService = await BasicReviewModel.aggregate([
+      {
+        $group: {
+          _id: "$service",
+          avgRating: { $avg: "$rating" },
+          noReviews: { $count: {} },
+        },
+      },
+    ]).lookup({
+      from: "services",
+      localField: "_id",
+      foreignField: "_id",
+      as: "Service",
+    });
+
+    //console.log(averageRatingPerProvider);
+    res.send(averageRatingPerService);
   } catch (error) {
     next(error);
   }
