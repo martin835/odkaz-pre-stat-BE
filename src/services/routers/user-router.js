@@ -15,6 +15,7 @@ import {
   generateAccessTokenForEmailVerification,
 } from "../../auth/tools.js";
 import { sendRegistrationEmail } from "../../tools/email-tools.js";
+import validateHuman from "../../middlewares/validateHuman.js";
 
 const usersRouter = express.Router();
 
@@ -111,7 +112,18 @@ usersRouter.post("/login", async (req, res, next) => {
 });
 
 usersRouter.post("/register", async (req, res, next) => {
-  //console.log(req.body);
+  console.log("new registration req body: ", req.body);
+
+  const human = await validateHuman(req.body.token);
+
+  console.log("HUMAN ? - ", human);
+
+  if (!human) {
+    res.status(400);
+    res.json({ errors: ["Human verification failed."] });
+    return;
+  }
+
   try {
     //1 - create a new user in DB, verification status =  verified:false (default)
     const newUser = new UserModel({
@@ -143,6 +155,7 @@ usersRouter.post("/register", async (req, res, next) => {
   }
 });
 
+//google login endpoint
 usersRouter.get(
   "/googleLogin",
   passport.authenticate("google", {
@@ -151,6 +164,7 @@ usersRouter.get(
   })
 );
 
+//google redirect endpoint
 usersRouter.get(
   "/googleRedirect",
   passport.authenticate("google"),
@@ -165,6 +179,7 @@ usersRouter.get(
   }
 );
 
+//verify-email endpoint
 usersRouter.post(
   "/verify-email",
   checkEmailMiddleware,
@@ -196,6 +211,7 @@ usersRouter.post(
   }
 );
 
+//get use by _id endpoint
 usersRouter.get("/:userId", async (req, res, next) => {
   //console.log("📨 PING - GET REQUEST");
   try {
