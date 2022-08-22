@@ -29,7 +29,8 @@ export const generateAccessTokenForEmailVerification = (payload) =>
 export const verifyAccessToken = (token) =>
   new Promise((resolve, reject) =>
     jwt.verify(token, process.env.JWT_SECRET, (err, payload) => {
-      if (err) reject(err);
+      if (err) reject(err.name);
+      //probably this line is causing braking errors - https://github.com/auth0/node-jsonwebtoken/issues/590   -  solution is to send err.name
       else resolve(payload);
     })
   );

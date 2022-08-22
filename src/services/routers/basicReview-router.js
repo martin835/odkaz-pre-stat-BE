@@ -12,12 +12,12 @@ const basicReviewRouter = express.Router();
 basicReviewRouter.get("/", async (req, res, next) => {
   // console.log("📨 PING - GET REQUEST");
   // console.log("REQ QUERY: ", req.query);
-  console.log("QUERY-TO-MONGO: ", q2m(req.query));
+  //console.log("QUERY-TO-MONGO: ", q2m(req.query));
   try {
     const mongoQuery = q2m(req.query);
 
     if (mongoQuery.criteria.providerId) {
-      console.log("I carry provider ID");
+      // console.log("I carry provider ID");
       const reviews = await BasicReviewModel.find({
         provider: mongoQuery.criteria.providerId,
       })
@@ -77,7 +77,7 @@ basicReviewRouter.get("/", async (req, res, next) => {
         reviews: reviews,
       });
     } else if (mongoQuery.criteria.serviceId) {
-      console.log("I carry service ID");
+      // console.log("I carry service ID");
       const reviews = await BasicReviewModel.find({
         service: { _id: mongoQuery.criteria.serviceId },
       })
@@ -91,7 +91,7 @@ basicReviewRouter.get("/", async (req, res, next) => {
         service: { _id: mongoQuery.criteria.serviceId },
       });
 
-      console.log("reviews for service: ", reviewsToCalcStats);
+      //console.log("reviews for service: ", reviewsToCalcStats);
 
       let sumOfAllReviews = 0;
       for (let i = 0; i < reviewsToCalcStats.length; i++) {
@@ -139,7 +139,7 @@ basicReviewRouter.get("/", async (req, res, next) => {
         reviews: reviews,
       });
     } else {
-      console.log("I carry no ID");
+      //console.log("I carry no ID");
       const reviews = await BasicReviewModel.find({})
         .limit(mongoQuery.options.limit || 6)
         .skip(mongoQuery.options.skip || 0)
